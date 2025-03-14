@@ -30,7 +30,10 @@ def connect_db():
         # Em caso de erro, imprime a mensagem de erro
         print(f"Erro: {err}")
         return None
-    
+
+
+
+
 app = Flask(__name__)
 
 @app.route('/imoveis', methods=['GET'])
