@@ -33,7 +33,7 @@ def connect_db():
     
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
+@app.route('/imoveis', methods=['GET'])
 def get_imoveis():
     conn = connect_db()
 
@@ -46,7 +46,6 @@ def get_imoveis():
     cursor.execute(sql)
 
     results = cursor.fetchall()
-    # print(len(results["imoveis"]))
     if not results:
         resp = {"erro": "Nenhum imovel encontrado"}
         return resp, 404
@@ -70,6 +69,8 @@ def get_imoveis():
         resp = {"imovel": imoveis}
         return resp, 200
     
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -11,7 +11,7 @@ def imovel():
 
 @patch("api.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis(mock_connect_db, imovel):
-    """Testa a rota /alunos sem acessar o banco de dados real."""
+    """Testa a rota /imoveis sem acessar o banco de dados real."""
  
     # Criamos um Mock para a conexão e o cursor
     mock_conn = MagicMock()
@@ -30,7 +30,7 @@ def test_get_imoveis(mock_connect_db, imovel):
     mock_connect_db.return_value = mock_conn
 
     # Fazemos a requisição para a API
-    response = imovel.get("/")
+    response = imovel.get("/imoveis")
 
     # Verificamos se o código de status da resposta é 200 (OK)
     assert response.status_code == 200
@@ -44,4 +44,6 @@ def test_get_imoveis(mock_connect_db, imovel):
     }
     
     assert response.get_json() == expected_response
+
+
 
