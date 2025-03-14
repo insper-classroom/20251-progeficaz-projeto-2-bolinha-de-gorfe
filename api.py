@@ -12,7 +12,7 @@ config = {
     'host': os.getenv('DB_HOST', 'localhost'),  # Obtém o host do banco de dados da variável de ambiente
     'user': os.getenv('DB_USER'),  # Obtém o usuário do banco de dados da variável de ambiente
     'password': os.getenv('DB_PASSWORD'),  # Obtém a senha do banco de dados da variável de ambiente
-    'database': os.getenv('DB_NAME', 'db_escola'),  # Obtém o nome do banco de dados da variável de ambiente
+    'database': os.getenv('DB_NAME', 'defaultdb'),  # Obtém o nome do banco de dados da variável de ambiente
     'port': int(os.getenv('DB_PORT', 3306)),  # Obtém a porta do banco de dados da variável de ambiente
     'ssl_ca': os.getenv('SSL_CA_PATH')  # Caminho para o certificado SSL
 }
@@ -35,6 +35,44 @@ def connect_db():
 
 
 app = Flask(__name__)
+
+@app.route('/', methods=['GET'])
+def get_imoveis():
+    conn = connect_db()
+
+    if conn is None:
+        resp = {"erro": "Erro ao conectar ao banco de dados"}
+        return resp, 500
+    
+    cursor = conn.cursor()
+    sql = "SELECT * from imoveis.imoveis"
+    cursor.execute(sql)
+
+    results = cursor.fetchall()
+    # print(len(results["imoveis"]))
+    if not results:
+        resp = {"erro": "Nenhum imovel encontrado"}
+        return resp, 404
+    
+    else:
+        imoveis = []
+        for imovel in results:
+            imovel_dict = {
+                "id": imovel[0],
+                "logradouro": imovel[1],
+                "tipo_logradouro": imovel[2],
+                "bairro": imovel[3],
+                "cidade": imovel[4],
+                "cep": imovel[5],
+                "tipo": imovel[6],
+                "valor": imovel[7],
+                "data_aquisicao": imovel[8],
+            }
+            imoveis.append(imovel_dict)
+
+        resp = {"imovel": imoveis}
+        return resp, 200
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
