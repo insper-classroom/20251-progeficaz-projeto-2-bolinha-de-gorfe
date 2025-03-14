@@ -32,6 +32,8 @@ def connect_db():
         return None
 
 
+
+
 app = Flask(__name__)
 
 if __name__ == '__main__':
