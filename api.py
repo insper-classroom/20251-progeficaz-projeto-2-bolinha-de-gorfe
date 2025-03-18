@@ -94,6 +94,9 @@ def listar_imoveis_por_cidade(cidade):
 
 
 
+
+
+
 @app.route('/imoveis/delete/<int:id>', methods=['DELETE'])
 def excluir_imovel(id):
         
