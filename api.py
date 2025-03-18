@@ -115,6 +115,81 @@ def excluir_imovel(id):
 
     return resp, 200
    
+@app.route('/imoveis/cidade/<string:cidade>', methods=['GET'])
+def listar_por_cidade(cidade):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    sql = "SELECT * FROM imoveis.imoveis WHERE cidade = %s"
+
+    cursor.execute(sql,(cidade,))
+    results = cursor.fetchall()
+    
+    if not results:
+        resp = {"erro": "Nenhum imovel encontrado nessa cidade"}
+        return resp, 404
+    
+    imoveis = []
+    for imovel in results:
+        imovel_dict = {
+            "id": imovel[0],
+            "logradouro": imovel[1],
+            "tipo_logradouro": imovel[2],
+            "bairro": imovel[3],
+            "cidade": imovel[4],
+            "cep": imovel[5],
+            "tipo": imovel[6],
+            "valor": imovel[7],
+            "data_aquisicao": imovel[8],
+        }
+        imoveis.append(imovel_dict)
+
+    resp = {"imovel": imoveis}
+    return resp, 200
+
+
+    
+@app.route('/imoveis/<int:id>', methods=['GET'])
+def get_imovel_by_id(id):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+
+    sql = ("SELECT * FROM imoveis.imoveis WHERE id =%s")  
+    cursor.execute(sql,(id,))
+    imovel = cursor.fetchone()
+
+    return jsonify({"id": imovel[0], "logradouro": imovel[1], "tipo_logradouro": imovel[2], "bairro": imovel[3],"cidade": imovel[4], "cep": imovel[5], "tipo": imovel[6], "valor": imovel[7], "data_aquisicao": imovel[8]}),200
+
+@app.route('/imoveis', methods=['POST'])
+def post_imovel():
+    
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    dados = request.json
+    sql = "INSERT INTO imoveis.imoveis (logradouro, tipo_logradouro, bairro, cidade, cep, tipo, valor, data_aquisicao) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    valores = dados["logradouro"], dados["tipo_logradouro"], dados["bairro"], dados["cidade"], dados["cep"], dados["tipo"], dados["valor"], dados["data_aquisicao"]
+
+    cursor.execute(sql, valores)
+    
+
+    conn.commit()
+    return jsonify({"mensagem": "imovel criado com sucesso"}), 200
+
+@app.route('/imoveis/<int:id>', methods=['PUT'])
+def update_imovel(id):
+    
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    dados = request.json
+    sql = "UPDATE imoveis.imoveis SET logradouro = %s, tipo_logradouro = %s, bairro = %s, cidade = %s, cep = %s, tipo = %s, valor = %s, data_aquisicao = %s WHERE id = %s"
+
+    valores = dados["logradouro"], dados["tipo_logradouro"], dados["bairro"], dados["cidade"], dados["cep"], dados["tipo"], dados["valor"], dados["data_aquisicao"], id
+    cursor.execute(sql, valores)
+    conn.commit()
+    return jsonify({"mensagem": "imovel atualizade com sucesso"}), 201
 
 
 if __name__ == '__main__':
