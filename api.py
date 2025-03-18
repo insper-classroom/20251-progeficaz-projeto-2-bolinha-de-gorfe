@@ -72,7 +72,49 @@ def get_imoveis():
         return resp, 200
     
 
+@app.route("/imoveis/cidade/<string:cidade>", methods=["GET"])
+def listar_imoveis_por_cidade(cidade):
+    """Retorna uma lista de imóveis filtrados por cidade."""
+    imoveis = imoveis.query.filter_by(cidade=cidade).all()
+    
+    if not imoveis:
+        resp = {"erro": "Nenhum imóvel encontrado nessa cidade."}
+        return resp, 404
 
+    resultado = [
+        {"id": imovel.id, "titulo": imovel.titulo, "preco": imovel.preco, "cidade": imovel.cidade}
+        for imovel in imoveis
+    ]
+
+    resp = {'imoveis': resultado}
+    
+    return resp, 200
+
+
+
+
+@app.route('/imoveis/delete/<int:id>', methods=['DELETE'])
+def excluir_imovel(id):
+        
+  conn = connect_db
+
+  if conn is None:
+      resp = {'erro': 'Erro ao conectar ao banco de dados'}
+      return resp, 500 
+
+  cursor = conn.cursor()
+
+  cursor.execute("DELETE FROM imoveis.imoveis WHERE id = %s", (id)) 
+  conn.commit()
+
+  if conn.is_connected(): 
+    cursor.close()
+    conn.close()
+
+    resp = { "mensagem": "Imóvel removido com sucesso."}
+
+    return resp, 200
+   
 
 
 if __name__ == '__main__':
