@@ -46,9 +46,6 @@ def test_get_imoveis(mock_connect_db, imovel):
     assert response.get_json() == expected_response
 
 
-
-
-
 @patch("api.connect_db")  
 def test_listar_por_cidade(mock_connect_db, imovel):
 
@@ -59,22 +56,81 @@ def test_listar_por_cidade(mock_connect_db, imovel):
     mock_conn.cursor.return_value = mock_cursor
 
     mock_cursor.fetchall.return_value = [(1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29"),
-        (2, "Lorenzo Flosi", "Avenida", "Itaim Bibi", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10"),], 200
+        (2, "Lorenzo Flosi", "Avenida", "Vila Olimpia", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10")]
 
     mock_connect_db.return_value = mock_conn
 
-    response = imovel.get("/cidade")
+    response = imovel.get("/imoveis/cidade/São Paulo")
 
     assert response.status_code == 200
 
     expected_response = {
-        'imovel': [ 
-        {1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29"},
-        {2, "Lorenzo Flosi", "Avenida", "Itaim Bibi", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10"}
+        "imovel": [
+            {"id": 1, "logradouro": "Mariana Gomes", "tipo_logradouro": "Rua", "bairro": "Itaim Bibi", "cidade": "São Paulo", "cep": "04550004", "tipo": "apartamento", "valor": "123425", "data_aquisicao":"2017-07-29"},
+            {"id": 2, "logradouro": "Lorenzo Flosi", "tipo_logradouro": "Avenida", "bairro": "Vila Olimpia", "cidade": "São Paulo", "cep": "04545004", "tipo": "apartamento", "valor": "458609", "data_aquisicao": "2024-04-10"},
         ]
     }
 
     assert response.get_json() == expected_response   
+
+
+
+@patch("api.connect_db") 
+def test_get_imovel_by_id(mock_connect_db, imovel): 
+
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_cursor.fetchone.return_value = (1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29")
+    mock_connect_db.return_value = mock_conn
+
+    response = imovel.get("/imoveis/1")
+    
+    assert response.status_code == 200
+     
+    expected_response = {"id": 1, "logradouro": "Mariana Gomes", "tipo_logradouro": "Rua", "bairro": "Itaim Bibi", "cidade": "São Paulo", "cep": "04550004", "tipo": "apartamento", "valor": "123425", "data_aquisicao":"2017-07-29"}
+    
+
+    assert response.get_json() == expected_response   
+
+@patch("api.connect_db") 
+def test_post_imovel(mock_connect_db, imovel):
+
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+
+    mock_conn.cursor.return_value = mock_cursor
+    mock_connect_db.return_value = mock_conn
+    
+    response = imovel.post("/imoveis", json={"logradouro": "Mariana Gomes", "tipo_logradouro": "Rua", "bairro": "Itaim Bibi", "cidade": "São Paulo", "cep": "04550004", "tipo": "apartamento", "valor": "123425", "data_aquisicao":"2017-07-29"})
+    assert response.status_code == 200
+    assert response.get_json() == {"mensagem": "imovel criado com sucesso"}
+
+
+@patch("api.connect_db") 
+def test_update_imovel(mock_connect_db, imovel):
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+
+    mock_conn.cursor.return_value = mock_cursor
+    mock_connect_db.return_value = mock_conn
+    response = imovel.put("/imoveis/1", json={"logradouro": "Mariana Gomes", "tipo_logradouro": "Rua", "bairro": "Itaim Bibi", "cidade": "São Paulo", "cep": "04550004", "tipo": "apartamento", "valor": "123425", "data_aquisicao":"2017-07-29"})
+    assert response.status_code == 201
+    assert response.get_json() == {"mensagem": "imovel atualizade com sucesso"}
+
+
+
+
+
+
+
+
+
+
+    
+
 
 
 

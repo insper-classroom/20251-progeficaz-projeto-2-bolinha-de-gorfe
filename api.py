@@ -1,8 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import os
 import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
+
+app = Flask(__name__)
 
 # Carrega as variáveis de ambiente do arquivo .cred (se disponível)
 load_dotenv('.env')
@@ -32,9 +34,6 @@ def connect_db():
         return None
 
 
-
-
-app = Flask(__name__)
 
 @app.route('/imoveis', methods=['GET'])
 def get_imoveis():
@@ -72,6 +71,7 @@ def get_imoveis():
         resp = {"imovel": imoveis}
         return resp, 200
     
+
 
 
 
