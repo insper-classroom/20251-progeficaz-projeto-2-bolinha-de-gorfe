@@ -11,7 +11,7 @@ def imovel():
 
 @patch("api.connect_db")  # Substituímos a função que conecta ao banco por um Mock
 def test_get_imoveis(mock_connect_db, imovel):
-    """Testa a rota /alunos sem acessar o banco de dados real."""
+    """Testa a rota /imoveis sem acessar o banco de dados real."""
  
     # Criamos um Mock para a conexão e o cursor
     mock_conn = MagicMock()
@@ -30,7 +30,7 @@ def test_get_imoveis(mock_connect_db, imovel):
     mock_connect_db.return_value = mock_conn
 
     # Fazemos a requisição para a API
-    response = imovel.get("/")
+    response = imovel.get("/imoveis")
 
     # Verificamos se o código de status da resposta é 200 (OK)
     assert response.status_code == 200
@@ -59,7 +59,7 @@ def test_listar_por_cidade(mock_connect_db, imovel):
     mock_conn.cursor.return_value = mock_cursor
 
     mock_cursor.fetchall.return_value = [(1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29"),
-        (2, "Lorenzo Flosi", "Avenida", "Itaim Bibi", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10"),], 200
+        (2, "Lorenzo Flosi", "Avenida", "Vila Olimpia", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10"),], 200
 
     mock_connect_db.return_value = mock_conn
 
@@ -70,11 +70,35 @@ def test_listar_por_cidade(mock_connect_db, imovel):
     expected_response = {
         'imovel': [ 
         {1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29"},
-        {2, "Lorenzo Flosi", "Avenida", "Itaim Bibi", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10"}
+        {2, "Lorenzo Flosi", "Avenida", "Vila Olimpia", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10"}
         ]
     }
 
     assert response.get_json() == expected_response   
+
+@patch("api.connect_db")  # Substituímos a função que conecta ao banco por um Mock
+def test_excluir_imovel(mock_connect_db, imovel):
+
+    mock_conn = MagicMock()
+    mock_cursor = MagicMock()
+
+    # Configuramos o Mock para retornar o cursor quando chamarmos conn.cursor()
+    mock_conn.cursor.return_value = mock_cursor
+
+    mock_cursor.fetchall.return_value = [], 200
+
+    mock_connect_db.return_value = mock_conn
+
+    response = imovel.delete("/delete")
+
+    assert response.status_code == 200
+
+    expected_response = {
+        "imovel": []
+    }
+
+    assert response.get_json() == expected_response
+
 
 
 

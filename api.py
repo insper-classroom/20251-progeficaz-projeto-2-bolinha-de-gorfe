@@ -36,7 +36,7 @@ def connect_db():
 
 app = Flask(__name__)
 
-@app.route('/', methods=['GET'])
+@app.route('/imoveis', methods=['GET'])
 def get_imoveis():
     conn = connect_db()
 
@@ -49,7 +49,6 @@ def get_imoveis():
     cursor.execute(sql)
 
     results = cursor.fetchall()
-    # print(len(results["imoveis"]))
     if not results:
         resp = {"erro": "Nenhum imovel encontrado"}
         return resp, 404
@@ -72,6 +71,25 @@ def get_imoveis():
 
         resp = {"imovel": imoveis}
         return resp, 200
+    
+
+@app.route("/imoveis/cidade/<string:cidade>", methods=["GET"])
+def listar_imoveis_por_cidade(cidade):
+    """Retorna uma lista de imóveis filtrados por cidade."""
+    imoveis = imoveis.query.filter_by(cidade=cidade).all()
+    
+    if not imoveis:
+        resp = {"erro": "Nenhum imóvel encontrado nessa cidade."}
+        return resp, 404
+
+    resultado = [
+        {"id": imovel.id, "titulo": imovel.titulo, "preco": imovel.preco, "cidade": imovel.cidade}
+        for imovel in imoveis
+    ]
+
+    resp = {'imoveis': resultado}
+    
+    return resp, 200
     
 
 if __name__ == '__main__':
