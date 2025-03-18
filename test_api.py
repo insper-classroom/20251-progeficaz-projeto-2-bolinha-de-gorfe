@@ -85,19 +85,28 @@ def test_excluir_imovel(mock_connect_db, imovel):
     # Configuramos o Mock para retornar o cursor quando chamarmos conn.cursor()
     mock_conn.cursor.return_value = mock_cursor
 
-    mock_cursor.fetchall.return_value = [], 200
+    mock_cursor.execute.return_value = None
+
+
+    mock_cursor.fetchall.side_effect = [
+        [
+        (1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29"),
+        (2, "Lorenzo Flosi", "Avenida", "Vila Olimpia", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10")
+        ]
+    ]
 
     mock_connect_db.return_value = mock_conn
 
-    response = imovel.delete("/delete")
+    response = imovel.delete("/imoveis/delete/1")
+
 
     assert response.status_code == 200
 
-    expected_response = {
-        "imovel": []
+    expected_message = {
+        "mensagem": "Imóvel removido com sucesso." 
     }
 
-    assert response.get_json() == expected_response
+    assert response.get_json() == expected_message
 
 
 

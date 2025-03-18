@@ -90,7 +90,32 @@ def listar_imoveis_por_cidade(cidade):
     resp = {'imoveis': resultado}
     
     return resp, 200
-    
+
+
+
+
+@app.route('/imoveis/delete/<int:id>', methods=['DELETE'])
+def excluir_imovel(id):
+        
+  conn = connect_db
+
+  if conn is None:
+      resp = {'erro': 'Erro ao conectar ao banco de dados'}
+      return resp, 500 
+
+  cursor = conn.cursor()
+
+  cursor.execute("DELETE FROM imoveis.imoveis WHERE id = %s", (id)) 
+  conn.commit()
+
+  if conn.is_connected(): 
+    cursor.close()
+    conn.close()
+
+    resp = { "mensagem": "Imóvel removido com sucesso."}
+
+    return resp, 200
+   
 
 if __name__ == '__main__':
     app.run(debug=True)
