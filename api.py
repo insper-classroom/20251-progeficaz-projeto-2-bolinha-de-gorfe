@@ -171,5 +171,37 @@ def update_imovel(id):
     return jsonify({"mensagem": "imovel atualizade com sucesso"}), 201
 
 
+@app.route('/imoveis/tipo/<string:tipo>', methods=['GET'])
+def listar_por_tipo(tipo):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    sql = "SELECT * FROM imoveis.imoveis WHERE tipo = %s"
+
+    cursor.execute(sql,(tipo,))
+    results = cursor.fetchall()
+    
+    if not results:
+        resp = {"erro": "Nenhum imovel encontrado nessa tipo"}
+        return resp, 404
+    
+    imoveis = []
+    for imovel in results:
+        imovel_dict = {
+            "id": imovel[0],
+            "logradouro": imovel[1],
+            "tipo_logradouro": imovel[2],
+            "bairro": imovel[3],
+            "cidade": imovel[4],
+            "cep": imovel[5],
+            "tipo": imovel[6],
+            "valor": imovel[7],
+            "data_aquisicao": imovel[8],
+        }
+        imoveis.append(imovel_dict)
+
+    resp = {"imovel": imoveis}
+    return resp, 200
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -117,20 +117,20 @@ def test_listar_por_tipo(mock_connect_db, imovel):
     mock_conn.cursor.return_value = mock_cursor
 
     mock_cursor.fetchall.return_value = [(1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29"),
-        ], 200
+        (2, "Lorenzo Flosi", "Avenida", "Vila Olimpia", "São Paulo", "04545004", "apartamento", "458609", "2024-04-10")]
 
     mock_connect_db.return_value = mock_conn
 
-    response = imovel.get("/tipo_logradouro")
+    response = imovel.get("/imoveis/tipo/apartamento")
 
     assert response.status_code == 200
 
     expected_response = {
-        'imovel': [ 
-        {1, "Mariana Gomes", "Rua", "Itaim Bibi", "São Paulo", "04550004", "apartamento", "123425", "2017-07-29"},
+        "imovel": [
+            {"id": 1, "logradouro": "Mariana Gomes", "tipo_logradouro": "Rua", "bairro": "Itaim Bibi", "cidade": "São Paulo", "cep": "04550004", "tipo": "apartamento", "valor": "123425", "data_aquisicao":"2017-07-29"},
+            {"id": 2, "logradouro": "Lorenzo Flosi", "tipo_logradouro": "Avenida", "bairro": "Vila Olimpia", "cidade": "São Paulo", "cep": "04545004", "tipo": "apartamento", "valor": "458609", "data_aquisicao": "2024-04-10"},
         ]
     }
-
     assert response.get_json() == expected_response
 
 
