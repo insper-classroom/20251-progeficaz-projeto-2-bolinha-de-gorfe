@@ -168,7 +168,7 @@ def update_imovel(id):
     valores = dados["logradouro"], dados["tipo_logradouro"], dados["bairro"], dados["cidade"], dados["cep"], dados["tipo"], dados["valor"], dados["data_aquisicao"], id
     cursor.execute(sql, valores)
     conn.commit()
-    return jsonify({"mensagem": "imovel atualizade com sucesso"}), 201
+    return jsonify({"mensagem": "imovel atualizado com sucesso"}), 201
 
 
 @app.route('/imoveis/tipo/<string:tipo>', methods=['GET'])
@@ -182,7 +182,7 @@ def listar_por_tipo(tipo):
     results = cursor.fetchall()
     
     if not results:
-        resp = {"erro": "Nenhum imovel encontrado nessa tipo"}
+        resp = {"erro": "Nenhum imovel desse tipo encontrado"}
         return resp, 404
     
     imoveis = []

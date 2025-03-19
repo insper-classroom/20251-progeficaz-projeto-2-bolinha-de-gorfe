@@ -132,6 +132,7 @@ def test_listar_por_tipo(mock_connect_db, imovel):
         ]
     }
     assert response.get_json() == expected_response
+    
 
 
 
@@ -178,7 +179,7 @@ def test_update_imovel(mock_connect_db, imovel):
     mock_connect_db.return_value = mock_conn
     response = imovel.put("/imoveis/1", json={"logradouro": "Mariana Gomes", "tipo_logradouro": "Rua", "bairro": "Itaim Bibi", "cidade": "São Paulo", "cep": "04550004", "tipo": "apartamento", "valor": "123425", "data_aquisicao":"2017-07-29"})
     assert response.status_code == 201
-    assert response.get_json() == {"mensagem": "imovel atualizade com sucesso"}
+    assert response.get_json() == {"mensagem": "imovel atualizado com sucesso"}
 
 
 
