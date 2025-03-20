@@ -4,7 +4,7 @@ from api import app, connect_db  # Importamos a aplicação Flask e a função d
 
 @pytest.fixture
 def imovel():
-    """Cria um cliente de teste para a API."""
+    """Cria um imovel de teste para a API."""
     app.config["TESTING"] = True
     with app.test_client() as imovel:
         yield imovel
@@ -180,11 +180,6 @@ def test_update_imovel(mock_connect_db, imovel):
     response = imovel.put("/imoveis/1", json={"logradouro": "Mariana Gomes", "tipo_logradouro": "Rua", "bairro": "Itaim Bibi", "cidade": "São Paulo", "cep": "04550004", "tipo": "apartamento", "valor": "123425", "data_aquisicao":"2017-07-29"})
     assert response.status_code == 201
     assert response.get_json() == {"mensagem": "imovel atualizado com sucesso"}
-
-
-
-
-
 
 
 
